@@ -27,7 +27,7 @@
   } = $props();
 
   const handleExpandTable = () => {
-    onExpandTable(table);
+    onExpandTable(table.id);
   };
 
   const handleEditTable = () => {
@@ -50,11 +50,11 @@
 <article
   class="card card-border border border-base-300 bg-base-100 transition hover:shadow-lg"
 >
-  <div class="card-body gap-3">
-    <div class="flex items-center justify-between gap-2 min-w-0">
+  <div class="card-body gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-6">
+    <div class="flex items-center justify-between gap-2 min-w-0 px-2 sm:px-4">
       <button
         type="button"
-        class="card-title flex-1 min-w-0 text-left break-words hover:underline focus:underline focus-visible:outline-none focus-visible:ring"
+        class="card-title flex-1 min-w-0 text-left hover:underline focus:underline focus-visible:outline-none focus-visible:ring flex items-center"
         aria-label={`Apri dettagli ${table.title}`}
         onclick={handleExpandTable}
       >
@@ -62,20 +62,20 @@
           <ConfettiIcon
             size={20}
             weight="fill"
-            class="inline-block align-middle text-warning mr-1"
+            class="inline-block align-middle text-warning mr-1 pointer-events-none shrink-0"
           />
         {:else if table.weight === 'Leggero (max 45 min)'}
-          <FeatherIcon size={20} weight="fill" class="inline-block align-middle text-info mr-1" />
+          <FeatherIcon size={20} weight="fill" class="inline-block align-middle text-info mr-1 pointer-events-none shrink-0" />
         {:else if table.weight === 'Medio (1-2h)'}
           <PuzzlePieceIcon
             size={20}
             weight="fill"
-            class="inline-block align-middle text-success mr-1"
+            class="inline-block align-middle text-success mr-1 pointer-events-none shrink-0"
           />
         {:else if table.weight === 'Estremo (>2h)'}
-          <SkullIcon size={20} weight="fill" class="inline-block align-middle text-error mr-1" />
+          <SkullIcon size={20} weight="fill" class="inline-block align-middle text-error mr-1 pointer-events-none shrink-0" />
         {/if}
-        {table.title}
+        <span class="truncate" style="max-width: 14ch;">{table.title}</span>
       </button>
       <div class="flex items-center gap-2">
         <span
@@ -105,7 +105,7 @@
       </div>
     </div>
 
-    <div class="flex flex-wrap items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2 px-2 sm:px-4">
       {#if table.players.length === 0}
         <span class="badge badge-outline">Tavolo vuoto :(</span>
       {:else}
@@ -113,13 +113,13 @@
           {@const playerBadge = getPlayerBadgeStyle(player.isBeginner, player.isTeacher)}
           <button
             type="button"
-            class={`${player.isTeacher ? 'badge badge-accent' : playerBadge.className} gap-1 max-w-full break-words hover:badge-outline focus-visible:outline-none focus-visible:ring flex items-center`}
+            class={`${player.isTeacher ? 'badge badge-accent' : playerBadge.className} gap-1 hover:badge-outline focus-visible:outline-none focus-visible:ring flex items-center`}
             title={player.isTeacher ? 'Spiegatore' : player.isBeginner ? 'Principiante' : 'Esperto'}
             aria-label={`Dettagli ${player.name}`}
             onclick={() => handleOpenDetailPlayer(player)}
           >
-            <playerBadge.Icon size={14} weight="fill" aria-hidden="true" />
-            <span class="inline-flex items-center gap-1">
+            <playerBadge.Icon size={14} weight="fill" aria-hidden="true" class="shrink-0" />
+            <span class="truncate" style="max-width: 14ch;">
               {player.name}
             </span>
           </button>

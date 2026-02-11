@@ -20,8 +20,8 @@
     if (open) errorMsg = '';
   });
 
-  function enhanceHandler({ update }: { update?: (opts?: { reset?: boolean }) => Promise<void> }) {
-    return async ({ result }: any) => {
+  function enhanceHandler() {
+    return async ({ result, update }: any) => {
       errorMsg = '';
       if (!result) return;
       if (result.type === 'success') {

@@ -1,46 +1,24 @@
 <script lang="ts">
   import type { Table, Player } from '$lib/types';
-  import { PencilSimpleIcon, PlusIcon, TrashIcon, XIcon, UserPlusIcon, DotsThreeOutlineVerticalIcon } from 'phosphor-svelte';
+  import {
+    PencilSimpleIcon,
+    TrashIcon,
+    XIcon,
+    UserPlusIcon,
+    DotsThreeOutlineVerticalIcon
+  } from 'phosphor-svelte';
   import { getPlayerBadgeStyle } from '$lib/utils/player';
-  import DetailPlayerModal from '../modals/DetailPlayerModal.svelte';
- let {
+  let {
     open = false,
     zIndex = 0,
     table = null,
-    formatDate,
     close,
-    onAddPlayer ,
-    onSavePlayer = () => {},
-    onDeleteTable ,
-    onEditTable ,  
-    onDeletePlayer 
-  } = $props() 
-
-  let detailPlayerModalOpen = $state(false);
-  let detailPlayer: Player | null = $state(null);
-
-  function openDetailPlayer(player: Player) {
-    detailPlayer = player;
-    detailPlayerModalOpen = true;
-  }
-  function closeDetailPlayer() {
-    detailPlayerModalOpen = false;
-    detailPlayer = null;
-  }
-
-  function handleSavePlayer(updated) {
-    if (table) {
-      table.players = table.players.map((p) => (p.id === updated.id ? updated : p));
-    }
-    if (table && updated?.id) {
-      onSavePlayer(table.id, updated);
-    }
-    // refresh detailPlayer if it was the one edited
-    if (detailPlayer && updated && (updated as any).id) {
-      const refreshed = table?.players.find(p => p.id === (updated as any).id);
-      if (refreshed) detailPlayer = refreshed;
-    }
-  }
+    onAddPlayer,
+    onDeleteTable,
+    onEditTable,
+    onDeletePlayer,
+    onOpenDetailPlayer
+  } = $props();
 
   const handleDialogClick = (e: MouseEvent) => {
     if (e.target === e.currentTarget) close();
@@ -63,7 +41,6 @@
   };
 
   const handleDeletePlayerButton = (player: Player) => {
-    closeDetailPlayer();
     onDeletePlayer(table.id, player.id, player.name);
   };
 
@@ -71,11 +48,9 @@
     onAddPlayer(table);
   };
 
-  const handlePlayerDeleted = (event: any) => {
-    closeDetailPlayer();
-    onDeletePlayer(table.id, event.id, event.name);
+  const handleOpenDetailPlayer = (player: Player) => {
+    onOpenDetailPlayer(table.id, player);
   };
-
 </script>
 
 {#if open && table}
@@ -88,20 +63,17 @@
   >
     <div class="modal-box space-y-2">
       <div class="flex items-center justify-between rounded-box bg-base-200 px-3 py-2">
-        <h3 class="card-title">{table.title}</h3>
+        <h3 class="card-title truncate" style="max-width: 14ch;">{table.title}</h3>
         <div class="flex items-center gap-1">
           <div class="dropdown dropdown-end">
             <button class="btn btn-ghost btn-sm" aria-label="Azioni tavolo">
               <DotsThreeOutlineVerticalIcon size={18} weight="bold" aria-hidden="true" />
             </button>
-            <ul
-              class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40 z-50"
-            >
+            <ul class="dropdown-content menu bg-base-200 rounded-box z-50 p-2 shadow">
               <li>
                 <button
-                  type="button"
                   onclick={handleEditTable}
-                  aria-label="Modifica tavolo"
+                  class="btn btn-ghost hover:bg-base-300 focus:bg-base-300 focus-visible:outline-none focus-visible:ring"
                 >
                   <PencilSimpleIcon size={16} weight="bold" aria-hidden="true" />
                   Modifica
@@ -109,10 +81,8 @@
               </li>
               <li>
                 <button
-                  type="button"
-                  class="text-error"
                   onclick={handleDeleteTable}
-                  aria-label="Elimina tavolo"
+                  class="text-error hover:bg-error hover:text-error-content"
                 >
                   <TrashIcon size={16} weight="bold" aria-hidden="true" />
                   Elimina
@@ -166,9 +136,10 @@
                     <td class="font-medium">
                       <button
                         type="button"
-                        class="p-0 m-0 min-h-0 h-auto text-base font-medium hover:underline focus:underline focus-visible:outline-none focus-visible:ring"
+                        class="p-0 m-0 min-h-0 h-auto text-base font-medium hover:underline focus:underline focus-visible:outline-none focus-visible:ring truncate"
+                        style="max-width: 14ch;"
                         aria-label={`Dettagli ${player.name}`}
-                        onclick={() => openDetailPlayer(player)}
+                        onclick={() => handleOpenDetailPlayer(player)}
                       >
                         {player.name}
                       </button>
@@ -182,11 +153,7 @@
                             ? 'Principiante'
                             : 'Esperto'}
                       >
-                        <playerBadge.Icon
-                          size={14}
-                          weight="fill"
-                          aria-hidden="true"
-                        />
+                        <playerBadge.Icon size={14} weight="fill" aria-hidden="true" />
                         <span
                           >{player.isTeacher
                             ? 'Spiegatore'
@@ -226,17 +193,4 @@
       </div>
     </div>
   </dialog>
-
-  {#if detailPlayerModalOpen && detailPlayer}
-    <DetailPlayerModal
-      player={detailPlayer}
-      open={detailPlayerModalOpen}
-      zIndex={zIndex + 1}
-      players={table.players}
-      tableId={table.id}
-      close={closeDetailPlayer}
-      saved={handleSavePlayer}
-      deleted={handlePlayerDeleted}
-    />
-  {/if}
 {/if}

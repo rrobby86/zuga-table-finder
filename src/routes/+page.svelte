@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import { deserialize } from '$app/forms';
-  import type { Player, Table, GameWeight } from '$lib/types';
   import TableCard from '$lib/components/TableCard.svelte';
   import MatchingSection from '$lib/components/MatchingSection.svelte';
   import FabMenu from '$lib/components/FabMenu.svelte';
@@ -15,17 +14,23 @@
   import DetailPlayerModal from '$lib/components/modals/DetailPlayerModal.svelte';
   import NightDatePicker from '$lib/components/NightDatePicker.svelte';
   import { getDefaultNightDate } from '$lib/utils/date';
-
-  // import {getPageData} from '$server/data';
+  import { PageStateManager } from '$lib/state/PageStateManager.svelte';
+  import { ActionsManager } from '$lib/state/ActionsManager.svelte';
 
   const honeypotName = 'website';
   const props = $props<{ data: PageData }>();
+  
   let pageData = $state(props.data);
+
+  // Initialize state manager
+  const stateManager = new PageStateManager(props.data.nightDate ?? getDefaultNightDate());
 
   $effect(() => {
     pageData = props.data;
+    stateManager.updateNightDate(props.data.nightDate ?? getDefaultNightDate());
   });
-
+  
+  // Data reload function
   const reloadData = async (updatedDate: string) => {
     const form = new FormData();
     form.set('nightDate', updatedDate);
@@ -37,196 +42,34 @@
     if (res.ok) {
       const result = deserialize(await res.text());
       if (result?.type === 'success' && result.data) {
-        pageData = result.data as PageData;
+        const nextData = result.data as PageData;
+        pageData = nextData;
+        stateManager.updateNightDate(nextData.nightDate);
       }
     }
   };
-  
-  let isFabMenuOpen = $state(false);
-  let isCreateTableModalOpen = $state(false);
-  let isAddSparePlayerModalOpen = $state(false);
 
-  let tableToAddPlayerTo: { id: string; title: string, nightDate: string } | null = $state(null);
-  let tableToDelete: { id: string; title: string } | null = $state(null);
-  let playerToDelete: { tableId: string; playerId: string; playerName: string } | null =
-    $state(null);
-  let tableToEdit: Table | null = $state(null);
-  let selectedTableId: string | null = $state(null);
-  let detailPlayerData: { tableId: string; player: Player } | null = $state(null);
-  let detailPlayerData: { tableId: string; player: Player } | null = $state(null);
+  // Initialize actions manager
+  const actions = new ActionsManager(stateManager, reloadData);
 
-  let defaultTitle = $state('');
-  let defaultDescription = $state('');
-  let defaultSeats: number | string = $state(4);
-  let defaultWeight: GameWeight | '' = $state('');
-
-  let baseZIndex = $state(0);
-  let editTableModalZIndex = $state(0);
-  let deleteTableModalZIndex = $state(0);
-
-
-  let nightDate = $state(props.data.nightDate ?? getDefaultNightDate());
-
-  const formatTimestamp = (timestamp: number) =>
-    new Date(timestamp).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-
-  const openEditTable = (table: Table, currentZIndex: number) => {
-    tableToEdit = table;
-    defaultTitle = table.title;
-    defaultDescription = table.description ?? '';
-    defaultSeats = table.seats;
-    defaultWeight = table.weight;
-    editTableModalZIndex = currentZIndex + 1;
-  };
-
-  const handleSavePlayer = async (tableId: string, updated: Player) => {
-    if (!updated?.id) return;
-    await reloadData(nightDate);
-  };
-
-  const handleNightDateSelected = async (updatedDate: string) => {
-    nightDate = updatedDate;
-    await reloadData(updatedDate);
-  };
-
-  const handleAddPlayer = (selectedTable: Table) => {
-    tableToAddPlayerTo = { id: selectedTable.id, title: selectedTable.title, nightDate: selectedTable.nightDate };
-  };
-
-  const handleDeleteTable = (selectedTable: Table, currentZIndex: number) => {
-    tableToDelete = { id: selectedTable.id, title: selectedTable.title };
-    deleteTableModalZIndex = currentZIndex + 1;
-  };
-
-  const handleExpandTable = (selectedTable: Table) => {
-    selectedTableId = selectedTable.id;
-  };
-
-  const handleDeletePlayer = (tableId: string, playerId: string, playerName: string) => {
-    playerToDelete = { tableId, playerId, playerName };
-  };
-
-  const handleToggleFab = () => {
-    isFabMenuOpen = !isFabMenuOpen;
-  };
-
-  const handleCreateTable = () => {
-    isCreateTableModalOpen = true;
-    isFabMenuOpen = false;
-  };
-
-  const handleAddSpare = () => {
-    isAddSparePlayerModalOpen = true;
-    isFabMenuOpen = false;
-  };
-
-  const handleCloseSpare = () => {
-    isAddSparePlayerModalOpen = false;
-  };
-
-  const handleSpareAdded = (sparePlayer: any) => {
-    if (sparePlayer) {
-      void reloadData(nightDate);
-    }
-    isAddSparePlayerModalOpen = false;
-  };
-
-  const handleCloseCreate = () => {
-    isCreateTableModalOpen = false;
-  };
-
-  const handleTableCreated = (table: any) => {
-    if (table) {
-      void reloadData(nightDate);
-    }
-    isCreateTableModalOpen = false;
-  };
-
-  const handleCloseEditTable = () => {
-    tableToEdit = null;
-  };
-
-  const handleTableSaved = (table: any) => {
-    void reloadData(nightDate);
-    tableToEdit = null;
-  };
-
-  const handleCloseDeleteTable = () => {
-    tableToDelete = null;
-  };
-
-  const handleTableDeleted = (tableId: string) => {
-    void reloadData(nightDate);
-    tableToDelete = null;
-  };
-
-  const handleCloseDetailTable = () => {
-    selectedTableId = null;
-  };
-
-  const handleDetailAddPlayer = (table: Table) => {
-    tableToAddPlayerTo = { id: table.id, title: table.title, nightDate: table.nightDate };
-  };
-
-  const handleDetailDeleteTable = (table: Table, currentZIndex: number) => {
-    tableToDelete = { id: table.id, title: table.title };
-    deleteTableModalZIndex = currentZIndex + 1;
-  };
-
-  const handleCloseAddPlayer = () => {
-    tableToAddPlayerTo = null;
-  };
-
-  const handlePlayerAdded = (updatedTable: any) => {
-    void reloadData(nightDate);
-    tableToAddPlayerTo = null;
-  };
-
-  const handleCloseDeletePlayer = () => {
-    playerToDelete = null;
-  };
-
-  const handlePlayerDeleted = (updatedTable: any) => {
-    void reloadData(nightDate);
-    playerToDelete = null;
-  };
-
-  const handleReloadData = () => {
-    return reloadData(nightDate);
-  };
-
-  const handleOpenDetailPlayer = (tableId: string, player: Player) => {
-    detailPlayerData = { tableId, player };
-  };
-
-  const handleCloseDetailPlayer = () => {
-    detailPlayerData = null;
-  };
-
-  const handleDetailPlayerDeleted = (event: any) => {
-    if (detailPlayerData) {
-      playerToDelete = { 
-        tableId: detailPlayerData.tableId, 
-        playerId: event.id, 
-        playerName: event.name 
-      };
-      detailPlayerData = null;
-    }
-  };
-
+  // Derived states
   const selectedTableDetails = $derived(
-    selectedTableId ? (pageData.tables.find((table) => table.id === selectedTableId) ?? null) : null
+    stateManager.detailTableModal.tableId
+      ? pageData.tables.find((table) => table.id === stateManager.detailTableModal.tableId) ?? null
+      : null
   );
 
   const detailPlayerTable = $derived(
-    detailPlayerData ? (pageData.tables.find((table) => table.id === detailPlayerData.tableId) ?? null) : null
+    stateManager.detailPlayerModal.data
+      ? pageData.tables.find((table) => table.id === stateManager.detailPlayerModal.data!.tableId) ?? null
+      : null
   );
 </script>
 
-<main class="w-full min-h-screen space-y-8 px-4 py-8 overflow-x-hidden">
+<main class="w-full min-h-screen space-y-4 sm:space-y-8 px-2 py-4 sm:px-4 sm:py-8 overflow-x-hidden">
   <header class="border-b border-base-300 bg-base-200/60">
 
-    <div class="flex w-full flex-wrap items-center justify-between gap-4 py-4">
+    <div class="flex w-full flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
       <div class="flex items-center gap-4">
         <div class="avatar">
           <div class="max-w-xs max-h-16 rounded overflow-hidden flex items-center justify-center">
@@ -243,27 +86,31 @@
         </div>
       </div>
       <NightDatePicker
-        zIndex={baseZIndex + 1}
-        {nightDate}
+        zIndex={stateManager.baseZIndex + 1}
+        nightDate={stateManager.nightDate}
         {honeypotName}
-        selected={handleNightDateSelected}
+        selected={(date) => {
+          stateManager.updateNightDate(date);
+          void actions.handleNightDateSelected(date);
+        }}
       />
     </div>
   </header>
 
-  <div class="grid gap-6 grid-cols-1">
-    <article class="card card-border" style={`z-index:${baseZIndex}`}>
-      <div class="card-body gap-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="card-title">Tavoli attivi</h2>
-          <p class="text-sm">Clicca sul titolo per vedere i dettagli.</p>
-        </div>
-        <span class="badge badge-outline"
-          >{pageData.tables.length}
-          <img src="/assets/icons/board-game.svg" alt="" class="h-4/5" aria-hidden="true" /></span
-        >
-      </div>
+  <div class="grid gap-3 sm:gap-6 grid-cols-1">
+    <section aria-labelledby="tables-heading">
+      <article class="card card-border" style={`z-index:${stateManager.baseZIndex}`}>
+        <div class="card-body gap-2 sm:gap-4 p-4 sm:p-8">
+        <header class="flex items-center justify-between">
+          <div>
+            <h2 id="tables-heading" class="card-title">Tavoli attivi</h2>
+            <p class="text-sm">Clicca sul titolo per vedere i dettagli.</p>
+          </div>
+          <span class="badge badge-outline"
+            >{pageData.tables.length}
+            <img src="/assets/icons/board-game.svg" alt="" class="h-4/5" aria-hidden="true" /></span
+          >
+        </header>
 
       {#if pageData.tables.length === 0}
         <div class="card card-border">
@@ -272,18 +119,18 @@
           </div>
         </div>
       {:else}
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 items-start">
+        <div class="grid gap-2 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 items-start">
           {#each [...pageData.tables].sort((a, b) => b.players.length - a.players.length) as table (table.id)}
             <TableCard
-              {baseZIndex}
+              baseZIndex={stateManager.baseZIndex}
               {table}
-              onAddPlayer={handleAddPlayer}
-              onSavePlayer={handleSavePlayer}
-              onDeleteTable={handleDeleteTable}
-              onEditTable={openEditTable}
-              onExpandTable={handleExpandTable}
-              onDeletePlayer={handleDeletePlayer}
-              onOpenDetailPlayer={handleOpenDetailPlayer}
+              onAddPlayer={stateManager.addPlayerModal.open}
+              onSavePlayer={(tableId, player) => actions.handleSavePlayer(tableId, player, stateManager.nightDate)}
+              onDeleteTable={stateManager.deleteTableModal.open}
+              onEditTable={stateManager.editTableModal.open}
+              onExpandTable={stateManager.detailTableModal.open}
+              onDeletePlayer={stateManager.deletePlayerModal.open}
+              onOpenDetailPlayer={stateManager.detailPlayerModal.open}
             />
           {/each}
         </div>
@@ -291,114 +138,120 @@
         </div>
 
     </article>
-    <aside class="lg:pt-0">
+    </section>
+    <section aria-labelledby="matching-heading">
       <MatchingSection
         weights={pageData.weights}
         sparePlayers={pageData.sparePlayers}
-        {baseZIndex}
+        baseZIndex={stateManager.baseZIndex}
         {honeypotName}
-        nightDate={pageData.nightDate}
-        reload={handleReloadData}
+        nightDate={stateManager.nightDate}
+        reload={() => reloadData(stateManager.nightDate)}
       />
-    </aside>
+    </section>
   </div>
 </main>
 
 <FabMenu
-  open={isFabMenuOpen}
-  zIndex={baseZIndex + 1}
-  onToggle={handleToggleFab}
-  onCreate={handleCreateTable}
-  onSpare={handleAddSpare}
+  open={stateManager.fabMenu.isOpen}
+  zIndex={stateManager.baseZIndex + 1}
+  onToggle={stateManager.fabMenu.toggle}
+  onCreate={() => {
+    stateManager.fabMenu.close();
+    stateManager.createTableModal.open();
+  }}
+  onSpare={() => {
+    stateManager.fabMenu.close();
+    stateManager.addSparePlayerModal.open();
+  }}
 />
 
 <AddSparePlayerModal
-  open={isAddSparePlayerModalOpen}
-  zIndex={baseZIndex + 2}
+  open={stateManager.addSparePlayerModal.isOpen}
+  zIndex={stateManager.baseZIndex + 2}
   {honeypotName}
   weights={pageData.weights}
-  nightDate={pageData.nightDate}
-  close={handleCloseSpare}
-  added={handleSpareAdded}
+  nightDate={stateManager.nightDate}
+  close={stateManager.addSparePlayerModal.close}
+  added={(sparePlayer) => actions.handleSpareAdded(sparePlayer, stateManager.nightDate)}
 />
 
 <!-- TABLE MODALS -->
 
 <CreateTableModal
-  open={isCreateTableModalOpen}
-  zIndex={baseZIndex + 2}
-  nightDate={pageData.nightDate}
+  open={stateManager.createTableModal.isOpen}
+  zIndex={stateManager.baseZIndex + 2}
+  nightDate={stateManager.nightDate}
   {honeypotName}
   weights={pageData.weights}
-  close={handleCloseCreate}
-  created={handleTableCreated}
+  close={stateManager.createTableModal.close}
+  created={(table) => actions.handleTableCreated(table, stateManager.nightDate)}
 />
 
 <EditTableModal
-  open={!!tableToEdit}
-  zIndex={editTableModalZIndex + 2}
+  open={stateManager.editTableModal.isOpen}
+  zIndex={stateManager.editTableModal.zIndex + 2}
   {honeypotName}
   weights={pageData.weights}
-  tableId={tableToEdit?.id ?? null}
-  bind:defaultTitle
-  bind:defaultDescription
-  bind:defaultSeats
-  bind:defaultWeight
-  close={handleCloseEditTable}
-  saved={handleTableSaved}
+  tableId={stateManager.editTableModal.table?.id ?? null}
+  bind:defaultTitle={stateManager.editTableModal.defaultTitle}
+  bind:defaultDescription={stateManager.editTableModal.defaultDescription}
+  bind:defaultSeats={stateManager.editTableModal.defaultSeats}
+  bind:defaultWeight={stateManager.editTableModal.defaultWeight}
+  close={stateManager.editTableModal.close}
+  saved={(table) => actions.handleTableSaved(table, stateManager.nightDate)}
 />
 
 <DeleteTableModal
-  open={!!tableToDelete}
-  zIndex={deleteTableModalZIndex + 2}
+  open={stateManager.deleteTableModal.isOpen}
+  zIndex={stateManager.deleteTableModal.zIndex + 2}
   {honeypotName}
-  table={tableToDelete}
-  close={handleCloseDeleteTable}
-  deleted={handleTableDeleted}
+  table={stateManager.deleteTableModal.table}
+  close={stateManager.deleteTableModal.close}
+  deleted={(tableId) => actions.handleTableDeleted(tableId, stateManager.nightDate)}
 />
 
 <DetailTableModal
   open={!!selectedTableDetails}
-  zIndex={baseZIndex + 2}
+  zIndex={stateManager.baseZIndex + 2}
   table={selectedTableDetails}
-  formatDate={formatTimestamp}
-  close={handleCloseDetailTable}
-  onSavePlayer={handleSavePlayer}
-  onAddPlayer={handleDetailAddPlayer}
-  onDeleteTable={handleDetailDeleteTable}
-  onEditTable={openEditTable}
-  onDeletePlayer={handleDeletePlayer}
+  close={stateManager.detailTableModal.close}
+  onAddPlayer={stateManager.addPlayerModal.open}
+  onDeleteTable={stateManager.deleteTableModal.open}
+  onEditTable={stateManager.editTableModal.open}
+  onDeletePlayer={stateManager.deletePlayerModal.open}
+  onOpenDetailPlayer={stateManager.detailPlayerModal.open}
 />
 
 <!-- PLAYER MODALS -->
 
 <AddPlayerModal
-  open={!!tableToAddPlayerTo}
-  zIndex={baseZIndex + 2}
+  open={stateManager.addPlayerModal.isOpen}
+  zIndex={stateManager.baseZIndex + 2}
   {honeypotName}
-  table={tableToAddPlayerTo}
-  close={handleCloseAddPlayer}
-  added={handlePlayerAdded}
+  table={stateManager.addPlayerModal.table}
+  close={stateManager.addPlayerModal.close}
+  added={(table) => actions.handlePlayerAdded(table, stateManager.nightDate)}
 />
 
 <DeletePlayerModal
-  open={!!playerToDelete}
-  zIndex={baseZIndex + 2}
+  open={stateManager.deletePlayerModal.isOpen}
+  zIndex={stateManager.baseZIndex + 2}
   {honeypotName}
-  player={playerToDelete}
-  close={handleCloseDeletePlayer}
-  deleted={handlePlayerDeleted}
+  player={stateManager.deletePlayerModal.player}
+  close={stateManager.deletePlayerModal.close}
+  deleted={(table) => actions.handlePlayerDeleted(table, stateManager.nightDate)}
 />
 
-{#if detailPlayerData && detailPlayerTable}
+{#if stateManager.detailPlayerModal.data && detailPlayerTable}
   <DetailPlayerModal
-    player={detailPlayerData.player}
+    player={stateManager.detailPlayerModal.data.player}
     open={true}
-    zIndex={baseZIndex + 2}
+    zIndex={stateManager.baseZIndex + 2}
     players={detailPlayerTable.players}
-    tableId={detailPlayerData.tableId}
-    close={handleCloseDetailPlayer}
-    saved={handleSavePlayer}
-    deleted={handleDetailPlayerDeleted}
+    tableId={stateManager.detailPlayerModal.data.tableId}
+    close={stateManager.detailPlayerModal.close}
+    saved={(player) => actions.handleSavePlayer(stateManager.detailPlayerModal.data!.tableId, player, stateManager.nightDate)}
+    deleted={actions.handleDetailPlayerDeleted}
   />
 {/if}

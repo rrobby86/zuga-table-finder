@@ -3,6 +3,21 @@
   import { PencilSimpleIcon, TrashIcon, XIcon, DotsThreeOutlineVerticalIcon } from 'phosphor-svelte';
   import EditPlayerModal from './EditPlayerModal.svelte';
 
+  class EditPlayerModalState {
+    isOpen = $state(false);
+    player: Player | null = $state(null);
+
+    open = (player: Player) => {
+      this.player = player;
+      this.isOpen = true;
+    };
+
+    close = () => {
+      this.isOpen = false;
+      this.player = null;
+    };
+  }
+
   let {
     player = null,
     open = false,
@@ -12,20 +27,9 @@
     close,
     saved,
     deleted
-  } = $props() 
+  } = $props()
 
-  
-  let editPlayerModalOpen = $state(false);
-  let selectedPlayer: Player | null = $state(null);
-
-  function openEditPlayer() {
-    selectedPlayer = player;
-    editPlayerModalOpen = true;
-  }
-  function closeEditPlayer() {
-    editPlayerModalOpen = false;
-    selectedPlayer = null;
-  }
+  const editModal = new EditPlayerModalState();
 
   const handleDialogClick = (e: MouseEvent) => {
     if (e.target === e.currentTarget) close();
@@ -41,7 +45,7 @@
 
   const handlePlayerSaved = (event: any) => {
     saved(event);
-    closeEditPlayer();
+    editModal.close();
   };
 
 </script>
@@ -62,19 +66,20 @@
             <button class="btn btn-ghost btn-sm" aria-label="Azioni giocatore">
               <DotsThreeOutlineVerticalIcon size={18} weight="fill" aria-hidden="true" />
             </button>
-            <ul class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 z-50">
+                        <ul class="dropdown-content menu bg-base-200 rounded-box z-50 p-2 shadow">
               <li>
-                <button type="button" onclick={openEditPlayer} aria-label="Modifica giocatore">
+                <button
+                  onclick={() => editModal.open(player)}
+                  class="btn btn-ghost hover:bg-base-300 focus:bg-base-300 focus-visible:outline-none focus-visible:ring"
+                >
                   <PencilSimpleIcon size={16} weight="bold" aria-hidden="true" />
                   Modifica
                 </button>
               </li>
               <li>
                 <button
-                  type="button"
-                  class="text-error"
                   onclick={handleDeletePlayer}
-                  aria-label="Elimina giocatore"
+                  class="text-error hover:bg-error hover:text-error-content"
                 >
                   <TrashIcon size={16} weight="bold" aria-hidden="true" />
                   Elimina
@@ -116,15 +121,15 @@
   </dialog>
 {/if}
 
-{#if editPlayerModalOpen && selectedPlayer}
+{#if editModal.isOpen && editModal.player}
   <EditPlayerModal
-    bind:player={selectedPlayer}
-    open={editPlayerModalOpen}
+    bind:player={editModal.player}
+    open={editModal.isOpen}
     zIndex={zIndex + 1}
     players={players}
     tableId={tableId}
     honeypotName=""
-    close={closeEditPlayer}
+    close={editModal.close}
     saved={handlePlayerSaved}
   />
 {/if}

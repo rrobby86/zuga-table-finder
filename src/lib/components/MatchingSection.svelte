@@ -4,7 +4,20 @@
   import type { SparePlayer, GameWeight } from '$lib/types';
   import DeleteSparePlayerModal from './modals/DeleteSparePlayerModal.svelte';
   
-  let sparePlayerToDelete: SparePlayer | null = $state(null);
+  class DeleteSparePlayerModalState {
+    isOpen = $state(false);
+    sparePlayer: SparePlayer | null = $state(null);
+
+    open = (sparePlayer: SparePlayer) => {
+      this.sparePlayer = sparePlayer;
+      this.isOpen = true;
+    };
+
+    close = () => {
+      this.isOpen = false;
+      this.sparePlayer = null;
+    };
+  }
 
   let {
     weights = {} as GameWeight[],
@@ -15,6 +28,8 @@
     reload = () => {}
   } = $props();
 
+  const deleteModal = new DeleteSparePlayerModalState();
+
   const groupedSparePlayers = $derived(
     weights.map((weight) => ({
       weight,
@@ -22,32 +37,24 @@
     }))
   );
 
-  const handleDeleteSparePlayer = (sparePlayer: SparePlayer) => {
-    sparePlayerToDelete = sparePlayer;
-  };
-
-  const handleCloseDeleteModal = () => {
-    sparePlayerToDelete = null;
-  };
-
   const handleSparePlayerDeleted = async (deletedSparePlayerId: string) => {
     await Promise.resolve(reload());
-    sparePlayerToDelete = null;
+    deleteModal.close();
   };
 
 </script>
 
 <article class="card card-border" style="z-index:{baseZIndex}">
-  <div class="card-body gap-4">
-    <div class="flex items-center justify-between">
+  <div class="card-body gap-2 sm:gap-4 p-4 sm:p-8">
+    <header class="flex items-center justify-between">
       <div>
-        <h2 class="card-title">Sei indeciso?</h2>
+        <h2 id="matching-heading" class="card-title">Sei indeciso?</h2>
         <p class="text-sm">Aggiungiti alla lista qui sotto per trovare compagni di gioco</p>
       </div>
       <span class="badge badge-outline"
         >{sparePlayers.length} <UserIcon size={20} weight="bold" aria-hidden="true" /></span
       >
-    </div>
+    </header>
 
     {#if sparePlayers.length === 0}
       <p class="text-sm">
@@ -98,7 +105,7 @@
                               type="button"
                               class="btn btn-xs btn-ghost btn-error hover:btn-outline focus-visible:outline-none focus-visible:ring"
                               aria-label={`Rimuovi ${sparePlayer.name}`}
-                              onclick={() => handleDeleteSparePlayer(sparePlayer)}
+                              onclick={() => deleteModal.open(sparePlayer)}
                             >
                               <TrashIcon size={14} weight="bold" aria-hidden="true" />
                             </button>
@@ -118,12 +125,12 @@
 </article>
 
 <DeleteSparePlayerModal
-  open={!!sparePlayerToDelete}
+  open={deleteModal.isOpen}
   zIndex={baseZIndex + 2}
   {honeypotName}
-  sparePlayer={sparePlayerToDelete}
+  sparePlayer={deleteModal.sparePlayer}
   nightDate={nightDate}
-  close={handleCloseDeleteModal}
+  close={deleteModal.close}
   deleted={handleSparePlayerDeleted}
 />
 

@@ -18,12 +18,8 @@
     if (open) errorMsg = '';
   });
 
-  const enhanceHandler = ({
-    update
-  }: {
-    update?: (opts?: { reset?: boolean }) => Promise<void>;
-  }) => {
-    return async ({ result }: any) => {
+  const enhanceHandler = () => {
+    return async ({ result, update }: any) => {
       if (!result) return;
       if (result.type === 'success') {
         const data = result.data as any;

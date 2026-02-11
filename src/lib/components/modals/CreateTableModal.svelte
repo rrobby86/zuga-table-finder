@@ -19,12 +19,8 @@
     if (open) errorMsg = '';
   });
 
-  const enhanceHandler = ({
-    update
-  }: {
-    update?: (opts?: { reset?: boolean }) => Promise<void>;
-  }) => {
-    return async ({ result }: any) => {
+  const enhanceHandler = () => {
+    return async ({ result, update }: any) => {
       errorMsg = '';
       if (!result) return;
       if (result.type === 'success') {
@@ -80,6 +76,7 @@
               id="create-table-title"
               name="title"
               required
+              maxlength="14"
               placeholder="Catan, Azul, party game..."
               class="input"
             />

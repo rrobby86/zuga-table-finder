@@ -23,8 +23,8 @@
     if (open) errorMsg = '';
   });
 
-  const enhanceHandler = ({ update }: { update?: (opts?: { reset?: boolean }) => Promise<void> }) => {
-    return async ({ result }: any) => {
+  const enhanceHandler = () => {
+    return async ({ result, update }: any) => {
       if (!result) return;
 
       if (result.type === 'success') {
@@ -69,7 +69,7 @@
           <input type="hidden" name="tableId" value={tableId ?? ''} />
           <div class="form-control flex flex-col gap-1">
             <label class="label" for="edit-table-title">Titolo del tavolo</label>
-            <input id="edit-table-title" name="title" required class="input" bind:value={defaultTitle} />
+            <input id="edit-table-title" name="title" required maxlength="14" class="input" bind:value={defaultTitle} />
           </div>
           <div class="form-control flex flex-col gap-1">
             <label class="label" for="edit-table-seats">Posti disponibili (1-12)</label>

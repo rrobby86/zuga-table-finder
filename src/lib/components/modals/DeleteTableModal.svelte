@@ -16,12 +16,8 @@
     if (open) errorMsg = '';
   });
 
-  const enhanceHandler = ({
-    update
-  }: {
-    update?: (opts?: { reset?: boolean }) => Promise<void>;
-  }) => {
-    return async ({ result }: any) => {
+  const enhanceHandler = () => {
+    return async ({ result, update }: any) => {
       errorMsg = '';
       // result can be undefined for redirects or non-JSON responses; handle defensively
       if (result == null) {
