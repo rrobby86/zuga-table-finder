@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Player } from '$lib/types';
-  import { PencilSimpleIcon, TrashIcon, XIcon, DotsThreeOutlineVerticalIcon } from 'phosphor-svelte';
+  import { PencilSimpleIcon, XIcon } from 'phosphor-svelte';
   import EditPlayerModal from './EditPlayerModal.svelte';
 
   class EditPlayerModalState {
@@ -40,6 +40,8 @@
   };
 
   const handleDeletePlayer = () => {
+    editModal.close();
+    close();
     deleted(player);
   };
 
@@ -57,40 +59,24 @@
         <div class="flex items-center justify-between gap-2 p-4">
           <h3 class="card-title text-base px-2">{player.name}</h3>
           <div class="flex items-center gap-1 shrink-0">
-          <div class="dropdown dropdown-end">
-            <button class="btn btn-ghost btn-sm" aria-label="Azioni giocatore">
-              <DotsThreeOutlineVerticalIcon size={18} weight="fill" aria-hidden="true" />
+            <button
+              class="btn btn-sm btn-ghost"
+              aria-label="Modifica giocatore"
+              onclick={() => editModal.open(player)}
+              type="button"
+            >
+              <PencilSimpleIcon size={18} weight="bold" aria-hidden="true" />
             </button>
-                        <ul class="dropdown-content menu bg-neutral rounded-box z-50 p-2 shadow">
-              <li>
-                <button
-                  onclick={() => editModal.open(player)}
-                  class="btn btn-ghost hover:bg-base-300 focus:bg-base-300 focus-visible:outline-none focus-visible:ring"
-                >
-                  <PencilSimpleIcon size={16} weight="bold" aria-hidden="true" />
-                  Modifica
-                </button>
-              </li>
-              <li>
-                <button
-                  onclick={handleDeletePlayer}
-                  class="text-error hover:bg-error hover:text-error-content"
-                >
-                  <TrashIcon size={16} weight="bold" aria-hidden="true" />
-                  Elimina
-                </button>
-              </li>
-            </ul>
+            <button
+              class="btn btn-sm btn-ghost"
+              aria-label="Chiudi dettagli"
+              onclick={close}
+              type="button"
+            >
+              <XIcon size={18} weight="bold" aria-hidden="true" />
+            </button>
           </div>
-          <button
-            class="btn btn-sm btn-ghost"
-            aria-label="Chiudi dettagli"
-            onclick={close}
-          >
-            <XIcon size={18} weight="bold" aria-hidden="true" />
-          </button>
         </div>
-      </div>
       <div class="card-body gap-4 pt-4">
         <div class="flex items-center gap-2 text-xs">
           <span class="font-semibold">ID:</span>
@@ -128,5 +114,6 @@
     honeypotName=""
     close={editModal.close}
     saved={handlePlayerSaved}
+    onDelete={handleDeletePlayer}
   />
 {/if}

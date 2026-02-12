@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { UserPlus } from 'phosphor-svelte';
+  import { UserIcon } from 'phosphor-svelte';
 
   let {
     open = false,
@@ -21,7 +21,7 @@
           aria-label="Aggiungi giocatore in lista"
           onclick={onSpare}
         >
-          <UserPlus size={22} weight="bold" aria-hidden="true" />
+          <UserIcon size={22} weight="bold" aria-hidden="true" />
         </button>
         <button
           class="btn btn-circle btn-primary shadow-lg animate-in slide-in-from-bottom-2 fade-in duration-200 hover:scale-120 transition-transform"
@@ -29,7 +29,13 @@
           aria-label="Nuovo tavolo"
           onclick={onCreate}
         >
-          <img src="/assets/icons/board-game.svg" alt="" class="h-3/5" aria-hidden="true" />
+          <svg class="h-3/5" viewBox="0 0 26 26" aria-hidden="true" fill="currentColor">
+            <path d="M25.484,7.114l-4.278-3.917C21.034,3.069,20.825,3,20.61,3H5.38C5.165,3,4.956,3.069,4.783,3.197l-4.38,4C0.403,7.197,0,7.453,0,8v2c0,0.551,0.449,1,1,1h24c0.551,0,1-0.449,1-1V8C26,7.469,25.484,7.114,25.484,7.114z"/>
+            <path d="M2,23c-0.551,0-1-0.449-1-1V10h3v12c0,0.551-0.449,1-1,1H2z"/>
+            <path d="M23,23c-0.551,0-1-0.449-1-1V10h3v12c0,0.551-0.449,1-1,1H23z"/>
+            <path d="M20,18c-0.551,0-1-0.449-1-1v-5h2v5C21,17.551,20.551,18,20,18L20,18z"/>
+            <path d="M6,18c-0.551,0-1-0.449-1-1v-5h2v5C7,17.551,6.551,18,6,18L6,18z"/>
+          </svg>
         </button>
       </div>
     {/if}

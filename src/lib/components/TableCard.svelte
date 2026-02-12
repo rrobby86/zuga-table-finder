@@ -2,15 +2,12 @@
   import type { Table } from '$lib/types';
   import {
     PencilSimpleIcon,
-    TrashIcon,
     UserPlusIcon,
-    XIcon,
     ConfettiIcon,
     FeatherIcon,
     PuzzlePieceIcon,
     SkullIcon,
-    GraduationCapIcon,
-    DotsThreeOutlineVerticalIcon
+    GraduationCapIcon
   } from 'phosphor-svelte';
   import { getPlayerBadgeStyle } from '$lib/utils/player';
   import type { Player } from '$lib/types';
@@ -81,25 +78,14 @@
         >
           {table.players.length}/{table.seats}
         </span>
-        <div class="dropdown dropdown-end dropdown-hover">
-          <button class="btn btn-sm btn-ghost" tabindex="0" aria-label="Azioni tavolo">
-            <DotsThreeOutlineVerticalIcon size={18} weight="bold" aria-hidden="true" />
-          </button>
-          <ul class="dropdown-content menu bg-neutral rounded-box z-50 p-2 shadow-sm">
-            <li>
-              <button onclick={handleEditTable} class="btn btn-ghost hover:bg-base-300 focus:bg-base-300 focus-visible:outline-none focus-visible:ring">
-                <PencilSimpleIcon size={16} weight="bold" aria-hidden="true" />
-                Modifica
-              </button>
-            </li>
-            <li>
-              <button onclick={handleDeleteTable} class="text-error hover:bg-error hover:text-error-content">
-                <TrashIcon size={16} weight="bold" aria-hidden="true" />
-                Elimina
-              </button>
-            </li>
-          </ul>
-        </div>
+        <button
+          class="btn btn-sm btn-ghost"
+          aria-label="Modifica tavolo"
+          onclick={handleEditTable}
+          type="button"
+        >
+          <PencilSimpleIcon size={18} weight="bold" aria-hidden="true" />
+        </button>
       </div>
     </div>
   </div>

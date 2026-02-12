@@ -132,6 +132,21 @@ class DetailPlayerModalState {
   };
 }
 
+class EditPlayerModalState {
+  isOpen = $state(false);
+  data: { tableId: string; player: Player } | null = $state(null);
+
+  open = (tableId: string, player: Player) => {
+    this.data = { tableId, player: { ...player } };
+    this.isOpen = true;
+  };
+
+  close = () => {
+    this.isOpen = false;
+    this.data = null;
+  };
+}
+
 class DeletePlayerModalState {
   isOpen = $state(false);
   player: { tableId: string; playerId: string; playerName: string } | null = $state(null);
@@ -157,6 +172,7 @@ export class PageStateManager {
   detailTableModal = new DetailTableModalState();
   addPlayerModal = new AddPlayerModalState();
   detailPlayerModal = new DetailPlayerModalState();
+  editPlayerModal = new EditPlayerModalState();
   deletePlayerModal = new DeletePlayerModalState();
 
   // Shared state

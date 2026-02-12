@@ -4,8 +4,7 @@
     PencilSimpleIcon,
     TrashIcon,
     XIcon,
-    UserPlusIcon,
-    DotsThreeOutlineVerticalIcon
+    UserPlusIcon
   } from 'phosphor-svelte';
   import { getPlayerBadgeStyle } from '$lib/utils/player';
   let {
@@ -63,31 +62,14 @@
         <div class="flex items-center justify-between gap-2 p-4">
           <h3 class="card-title text-base px-2 truncate" style="max-width: 14ch;">{table.title}</h3>
           <div class="flex items-center gap-1 shrink-0">
-            <div class="dropdown dropdown-end">
-              <button class="btn btn-ghost btn-sm" aria-label="Azioni tavolo">
-                <DotsThreeOutlineVerticalIcon size={18} weight="bold" aria-hidden="true" />
-              </button>
-              <ul class="dropdown-content menu bg-neutral rounded-box z-50 p-2 shadow-sm">
-                <li>
-                  <button
-                    onclick={handleEditTable}
-                    class="btn btn-ghost hover:bg-base-300 focus:bg-base-300 focus-visible:outline-none focus-visible:ring"
-                  >
-                    <PencilSimpleIcon size={16} weight="bold" aria-hidden="true" />
-                    Modifica
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onclick={handleDeleteTable}
-                    class="text-error hover:bg-error hover:text-error-content"
-                  >
-                    <TrashIcon size={16} weight="bold" aria-hidden="true" />
-                    Elimina
-                  </button>
-                </li>
-              </ul>
-            </div>
+            <button
+              class="btn btn-sm btn-ghost"
+              aria-label="Modifica tavolo"
+              onclick={handleEditTable}
+              type="button"
+            >
+              <PencilSimpleIcon size={18} weight="bold" aria-hidden="true" />
+            </button>
             <button
               class="btn btn-sm btn-ghost"
               aria-label="Chiudi dettagli"

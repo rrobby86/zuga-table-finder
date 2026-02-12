@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import type { Player } from '$lib/types';
-  import { X } from 'phosphor-svelte';
+  import { X, TrashIcon } from 'phosphor-svelte';
 
   let {
     player = $bindable<Player | null>(null),
@@ -11,7 +11,8 @@
     tableId = null,
     honeypotName,
     close,
-    saved
+    saved,
+    onDelete
   } = $props() 
 
   // get original player object before any edits for comparison in validation
@@ -128,8 +129,11 @@
               <span>Spiegatore</span>
             </label>
           </div>
-          <div class="flex items-center justify-end gap-2">
-            <button type="button" class="btn btn-ghost" onclick={close}>Annulla</button>
+          <div class="flex items-center justify-between gap-2">
+            <button type="button" class="btn btn-error" onclick={onDelete}>
+              <TrashIcon size={16} weight="bold" aria-hidden="true" />
+              Elimina
+            </button>
             <button class="btn btn-success" type="submit">Salva</button>
           </div>
         </div>

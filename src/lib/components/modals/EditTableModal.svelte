@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import type { Table, GameWeight } from '$lib/types';
-  import { ConfettiIcon, FeatherIcon, PuzzlePieceIcon, SkullIcon, XIcon } from 'phosphor-svelte';
+  import { ConfettiIcon, FeatherIcon, PuzzlePieceIcon, SkullIcon, XIcon, TrashIcon } from 'phosphor-svelte';
 
 
   let {
@@ -15,7 +15,8 @@
     defaultSeats =  $bindable(),
     defaultWeight =  $bindable(),
     close,
-    saved
+    saved,
+    onDelete
   } = $props() 
 
   let errorMsg = $state('');
@@ -114,8 +115,11 @@
               class="textarea rounded-lg"
               bind:value={defaultDescription}></textarea>
           </div>
-          <div class="flex items-center justify-end gap-2">
-            <button type="button" class="btn btn-ghost" onclick={close}>Annulla</button>
+          <div class="flex items-center justify-between gap-2">
+            <button type="button" class="btn btn-error" onclick={onDelete}>
+              <TrashIcon size={16} weight="bold" aria-hidden="true" />
+              Elimina
+            </button>
             <button class="btn btn-success" type="submit">Salva</button>
           </div>
         </div>

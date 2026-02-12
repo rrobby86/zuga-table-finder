@@ -12,6 +12,7 @@
   import DeletePlayerModal from '$lib/components/modals/DeletePlayerModal.svelte';
   import DetailTableModal from '$lib/components/modals/DetailTableModal.svelte';
   import DetailPlayerModal from '$lib/components/modals/DetailPlayerModal.svelte';
+  import EditPlayerModal from '$lib/components/modals/EditPlayerModal.svelte';
   import NightDatePicker from '$lib/components/NightDatePicker.svelte';
   import { getDefaultNightDate } from '$lib/utils/date';
   import { PageStateManager } from '$lib/state/PageStateManager.svelte';
@@ -64,6 +65,12 @@
       ? pageData.tables.find((table) => table.id === stateManager.detailPlayerModal.data!.tableId) ?? null
       : null
   );
+
+  const editPlayerTable = $derived(
+    stateManager.editPlayerModal.data
+      ? pageData.tables.find((table) => table.id === stateManager.editPlayerModal.data!.tableId) ?? null
+      : null
+  );
 </script>
 
 <main class="w-full min-h-screen space-y-4 sm:space-y-8 px-2 py-4 sm:px-4 sm:py-8 overflow-x-hidden">
@@ -107,7 +114,7 @@
       onEditTable={stateManager.editTableModal.open}
       onExpandTable={stateManager.detailTableModal.open}
       onDeletePlayer={stateManager.deletePlayerModal.open}
-      onOpenDetailPlayer={stateManager.detailPlayerModal.open}
+      onOpenDetailPlayer={stateManager.editPlayerModal.open}
     />
     <PlayerMatchingSection
       weights={pageData.weights}
@@ -168,6 +175,12 @@
   bind:defaultWeight={stateManager.editTableModal.defaultWeight}
   close={stateManager.editTableModal.close}
   saved={(table) => actions.handleTableSaved(table, stateManager.nightDate)}
+  onDelete={() => {
+    if (stateManager.editTableModal.table) {
+      stateManager.editTableModal.close();
+      stateManager.deleteTableModal.open(stateManager.editTableModal.table, stateManager.baseZIndex);
+    }
+  }}
 />
 
 <DeleteTableModal
@@ -188,7 +201,7 @@
   onDeleteTable={stateManager.deleteTableModal.open}
   onEditTable={stateManager.editTableModal.open}
   onDeletePlayer={stateManager.deletePlayerModal.open}
-  onOpenDetailPlayer={stateManager.detailPlayerModal.open}
+  onOpenDetailPlayer={stateManager.editPlayerModal.open}
 />
 
 <!-- PLAYER MODALS -->
@@ -221,5 +234,25 @@
     close={stateManager.detailPlayerModal.close}
     saved={(player) => actions.handleSavePlayer(stateManager.detailPlayerModal.data!.tableId, player, stateManager.nightDate)}
     deleted={actions.handleDetailPlayerDeleted}
+  />
+{/if}
+
+{#if stateManager.editPlayerModal.data && editPlayerTable}
+  <EditPlayerModal
+    bind:player={stateManager.editPlayerModal.data.player}
+    open={true}
+    zIndex={stateManager.baseZIndex + 2}
+    players={editPlayerTable.players}
+    tableId={stateManager.editPlayerModal.data.tableId}
+    honeypotName={honeypotName}
+    close={stateManager.editPlayerModal.close}
+    saved={(player) => actions.handleSavePlayer(stateManager.editPlayerModal.data!.tableId, player, stateManager.nightDate)}
+    onDelete={() => {
+      if (stateManager.editPlayerModal.data) {
+        const { tableId, player } = stateManager.editPlayerModal.data;
+        stateManager.editPlayerModal.close();
+        stateManager.deletePlayerModal.open(tableId, player.id, player.name);
+      }
+    }}
   />
 {/if}
