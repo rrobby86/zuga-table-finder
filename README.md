@@ -71,9 +71,36 @@ See [TESTING.md](TESTING.md) for detailed test documentation.
 - `MONGODB_URI`: Connection string MongoDB (obbligatorio)
 - `MONGODB_DB`: Nome del database (opzionale, default: 'Zuga')
 
-## GitHub Secrets (opzionale)
-Se in futuro vorrai usare GitHub Actions per deployment o test con database:
-1. Vai su GitHub → Repository Settings → Secrets and variables → Actions
-2. Aggiungi `MONGODB_URI` come secret (usala poi nel workflow con `${{ secrets.MONGODB_URI }}`)
+## GitHub Secrets
+Per CI/CD sono richiesti i seguenti secrets in GitHub (Settings → Secrets and variables → Actions):
 
-Attualmente il workflow CI non richiede accesso al database.
+### Required per CI:
+- `MONGODB_URI`: Connection string MongoDB per i test
+
+### Required per AWS Deployment:
+- `AWS_ACCESS_KEY_ID`: AWS Access Key ID
+- `AWS_SECRET_ACCESS_KEY`: AWS Secret Access Key
+- `AWS_REGION`: Regione AWS (es. 'eu-west-1')
+
+### Optional - Deployment specifici:
+
+**EC2 Deployment:**
+- `EC2_HOST`: Indirizzo IP o hostname del server EC2
+- `EC2_USER`: Username SSH (default: 'ubuntu')
+- `EC2_SSH_KEY`: Chiave privata SSH per l'accesso
+
+**Elastic Beanstalk:**
+- `EB_APPLICATION_NAME`: Nome dell'applicazione Elastic Beanstalk
+- `EB_ENVIRONMENT_NAME`: Nome dell'environment
+
+**App Runner / ECR:**
+- `ECR_REGISTRY`: Registry ECR (es. '123456789.dkr.ecr.eu-west-1.amazonaws.com')
+- `ECR_REPOSITORY`: Nome repository ECR (default: 'zuga-table-finder')
+- `APP_RUNNER_SERVICE_ARN`: ARN del servizio App Runner
+
+**S3 + CloudFront (static):**
+- `S3_BUCKET`: Nome bucket S3
+- `CLOUDFRONT_DISTRIBUTION_ID`: ID distribuzione CloudFront
+
+Il workflow di deployment (`deploy-aws.yml`) supporta multiple opzioni di deployment. Configura solo i secrets per il metodo che intendi usare.
+
