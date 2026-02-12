@@ -44,9 +44,9 @@
   };
 </script>
 
-<article class="card bg-base-100 card-border border-base-300 overflow-visible transition hover:shadow-lg w-full">
+<article class="card bg-base-100 card-border border-base-300 transition hover:shadow-lg w-full">
   <div class="border-base-300 ">
-    <div class="flex items-center justify-between gap-2 p-4 pb-2">
+    <div class="flex items-center justify-between gap-2 p-4 pb-2 w-full">
       <button
         type="button"
         class="card-title text-base flex-1 min-w-0 px-2 text-left hover:underline focus:underline focus-visible:outline-none focus-visible:ring flex items-center gap-1"

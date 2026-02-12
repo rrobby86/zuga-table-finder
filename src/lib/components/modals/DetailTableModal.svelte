@@ -53,7 +53,7 @@
 </script>
 
 {#if open && table}
-  <dialog class="modal modal-open" style={`z-index:${zIndex}`} onclick={handleDialogClick}>
+  <dialog class="modal modal-open items-start sm:items-center" style={`z-index:${zIndex}`} onclick={handleDialogClick}>
     <div
       class="card bg-base-100 card-border border-base-300 overflow-hidden mx-4"
       style="width: calc(100% - 4rem); max-width: 42rem;"
@@ -105,7 +105,7 @@
           <div class="divider my-0"></div>
           {#if table.players.length === 0}
             <div>
-              <span class="badge badge-outline">Tavolo vuoto: invita qualcuno a giocare!</span>
+              <span class="badge badge-outline">Tavolo vuoto: invita qualcuno!</span>
             </div>
           {:else}
             <div>

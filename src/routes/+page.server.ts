@@ -98,6 +98,16 @@ export const actions: Actions = {
       return fail(400, { message: 'Seleziona il peso del tavolo', form: 'update' });
     }
 
+    // Check for duplicate title
+    const existingTable = await getTableById(tableId);
+    if (!existingTable) return fail(404, { message: 'Tavolo non trovato', form: 'update' });
+
+    const tablesForNight = await listTables(existingTable.nightDate);
+    const duplicateTitle = tablesForNight.some(t => t.id !== tableId && t.title.trim().toLowerCase() === title.trim().toLowerCase());
+    if (duplicateTitle) {
+      return fail(400, { message: 'Esiste già un tavolo con questo titolo per questa serata', form: 'update' });
+    }
+
     const weight = weightRaw as (typeof WEIGHTS)[number];
     const table = await updateTable(tableId, { title, description, seats, weight });
     if (!table) return fail(404, { message: 'Tavolo non trovato', form: 'update' });

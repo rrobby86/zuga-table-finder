@@ -1,4 +1,4 @@
-import { Fire, Leaf, GraduationCap } from 'phosphor-svelte';
+import { FireIcon, LeafIcon, GraduationCapIcon } from 'phosphor-svelte';
 import type { ComponentType } from 'svelte';
 
 export interface PlayerBadgeStyle {
@@ -15,9 +15,9 @@ export interface PlayerBadgeStyle {
  */
 export function getPlayerBadgeStyle(isBeginner: boolean, isTeacher?: boolean): PlayerBadgeStyle {
   if (isTeacher) {
-    return { className: 'badge badge-accent', Icon: GraduationCap, label: 'Spiegatore' };
+    return { className: 'badge badge-accent', Icon: GraduationCapIcon, label: 'Spiegatore' };
   }
   return isBeginner
-    ? { className: 'badge badge-success', Icon: Leaf, label: 'Principiante' }
-    : { className: 'badge badge-error', Icon: Fire, label: 'Esperto' };
+    ? { className: 'badge badge-success', Icon: LeafIcon, label: 'Principiante' }
+    : { className: 'badge badge-error', Icon: FireIcon, label: 'Esperto' };
 }

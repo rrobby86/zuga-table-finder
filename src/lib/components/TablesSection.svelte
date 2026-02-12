@@ -77,9 +77,9 @@
           {/each}
         </div>
       {:else}
-        <div class="carousel carousel-center max-w-md space-x-2 p-4">
+        <div class="carousel carousel-center w-full space-x-2 p-4">
           {#each carouselSortedTables as table, index (table.id)}
-            <div id="table-{index}" class="carousel-item w-80">
+            <div id="table-{index}" class="carousel-item w-[80vw] xl:w-[30vw] lg:w-[30vw]">
               <TableCard
                 {baseZIndex}
                 {table}
