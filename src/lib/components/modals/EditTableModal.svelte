@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import type { Table, GameWeight } from '$lib/types';
-  import { Confetti, Feather, PuzzlePiece, Skull, X } from 'phosphor-svelte';
+  import { ConfettiIcon, FeatherIcon, PuzzlePieceIcon, SkullIcon, XIcon } from 'phosphor-svelte';
 
 
   let {
@@ -51,25 +51,27 @@
 
 {#if open}
   <dialog class="modal modal-open" style={`z-index:${zIndex}`} onclick={(e) => { if (e.target === e.currentTarget) close(); }}>
-    <div class="modal-box">
-      <div class="flex items-center justify-between px-3 py-2">
-        <h3 class="card-title">Modifica tavolo</h3>
-        <button class="btn btn-sm btn-ghost" aria-label="Chiudi dettagli" onclick={close}>
-          <X size={18} weight="bold" aria-hidden="true" />
-        </button>
+    <div class="card bg-base-100 card-border border-base-300 overflow-hidden mx-4" style="width: calc(100% - 4rem); max-width: 42rem;">
+      <div class="border-base-300 border-b border-dashed">
+        <div class="flex items-center justify-between gap-2 p-4">
+          <h3 class="card-title text-base px-2">Modifica tavolo</h3>
+          <button class="btn btn-sm btn-ghost shrink-0" aria-label="Chiudi" onclick={close}>
+            <XIcon size={18} weight="bold" aria-hidden="true" />
+          </button>
+        </div>
       </div>
       <form method="POST" action="?/updateTable" use:enhance={enhanceHandler}>
-        <div class="card-body">
+        <div class="card-body gap-4">
           <input name={honeypotName} hidden tabindex="-1" aria-hidden="true" />
           {#if errorMsg}
-            <div class="alert alert-error alert-soft mb-2 text-sm">
+            <div class="alert alert-error alert-soft text-sm">
               <span>{errorMsg}</span>
             </div>
           {/if}
           <input type="hidden" name="tableId" value={tableId ?? ''} />
           <div class="form-control flex flex-col gap-1">
             <label class="label" for="edit-table-title">Titolo del tavolo</label>
-            <input id="edit-table-title" name="title" required maxlength="14" class="input" bind:value={defaultTitle} />
+            <input id="edit-table-title " name="title" required maxlength="14" class="input" bind:value={defaultTitle} />
           </div>
           <div class="form-control flex flex-col gap-1">
             <label class="label" for="edit-table-seats">Posti disponibili (1-12)</label>
@@ -89,13 +91,13 @@
               {#each weights as weight}
                 <option value={weight}>
                   {#if weight === 'Party'}
-                    <span class="inline-flex items-center gap-1"><Confetti size={20} weight="fill" class="inline-block align-middle text-warning" /> Party</span>
+                    <span class="inline-flex items-center gap-1"><ConfettiIcon size={20} weight="fill" class="inline-block align-middle text-warning" /> Party</span>
                   {:else if weight === 'Leggero (max 45 min)'}
-                    <span class="inline-flex items-center gap-1"><Feather size={20} weight="fill" class="inline-block align-middle text-info" /> Leggero (max 45 min)</span>
+                    <span class="inline-flex items-center gap-1"><FeatherIcon size={20} weight="fill" class="inline-block align-middle text-info" /> Leggero (max 45 min)</span>
                   {:else if weight === 'Medio (1-2h)'}
-                    <span class="inline-flex items-center gap-1"><PuzzlePiece size={20} weight="fill" class="inline-block align-middle text-success" /> Medio (1-2h)</span>
+                    <span class="inline-flex items-center gap-1"><PuzzlePieceIcon size={20} weight="fill" class="inline-block align-middle text-success" /> Medio (1-2h)</span>
                   {:else if weight === 'Estremo (>2h)'}
-                    <span class="inline-flex items-center gap-1"><Skull size={20} weight="fill" class="inline-block align-middle text-error" /> Estremo (&gt;2h)</span>
+                    <span class="inline-flex items-center gap-1"><SkullIcon size={20} weight="fill" class="inline-block align-middle text-error" /> Estremo (&gt;2h)</span>
                   {:else}
                     {weight}
                   {/if}
@@ -112,7 +114,7 @@
               class="textarea rounded-lg"
               bind:value={defaultDescription}></textarea>
           </div>
-          <div class="modal-action">
+          <div class="flex items-center justify-end gap-2">
             <button type="button" class="btn btn-ghost" onclick={close}>Annulla</button>
             <button class="btn btn-success" type="submit">Salva</button>
           </div>

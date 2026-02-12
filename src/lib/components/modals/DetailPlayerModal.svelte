@@ -51,22 +51,17 @@
 </script>
 
 {#if open && player}
-  <dialog
-    class="modal modal-open"
-    style={`z-index:${zIndex}`}
-    open
-    onclick={handleDialogClick}
-    oncancel={handleCancel}
-  >
-    <div class="modal-box space-y-2">
-      <div class="flex items-center justify-between rounded-box bg-base-200 px-3 py-2">
-        <h3 class="card-title">{player.name}</h3>
-        <div class="flex items-center gap-1">
+  <dialog class="modal modal-open" style={`z-index:${zIndex}`} onclick={handleDialogClick}>
+    <div class="card bg-base-100 card-border border-base-300 overflow-hidden mx-4" style="width: calc(100% - 4rem); max-width: 42rem;">
+      <div class="border-base-300 border-b border-dashed">
+        <div class="flex items-center justify-between gap-2 p-4">
+          <h3 class="card-title text-base px-2">{player.name}</h3>
+          <div class="flex items-center gap-1 shrink-0">
           <div class="dropdown dropdown-end">
             <button class="btn btn-ghost btn-sm" aria-label="Azioni giocatore">
               <DotsThreeOutlineVerticalIcon size={18} weight="fill" aria-hidden="true" />
             </button>
-                        <ul class="dropdown-content menu bg-base-200 rounded-box z-50 p-2 shadow">
+                        <ul class="dropdown-content menu bg-neutral rounded-box z-50 p-2 shadow">
               <li>
                 <button
                   onclick={() => editModal.open(player)}
@@ -96,7 +91,7 @@
           </button>
         </div>
       </div>
-      <div class="space-y-1 px-3 py-1">
+      <div class="card-body gap-4 pt-4">
         <div class="flex items-center gap-2 text-xs">
           <span class="font-semibold">ID:</span>
           <span class="break-all">{player.id}</span>
@@ -118,6 +113,8 @@
       </div>
       <div class="card-actions items-center justify-center"></div>
     </div>
+    </div>
+    <button type="button" class="modal-backdrop" onclick={close} aria-label="Chiudi"></button>
   </dialog>
 {/if}
 

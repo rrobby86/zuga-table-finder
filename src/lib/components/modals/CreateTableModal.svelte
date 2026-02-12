@@ -52,22 +52,26 @@
       if (e.target === e.currentTarget) close();
     }}
   >
-    <div class="modal-box">
-      <button
-        class="btn btn-sm btn-ghost absolute right-2 top-2 z-10"
-        aria-label="Chiudi"
-        onclick={close}
-      >
-        <X size={18} weight="bold" aria-hidden="true" />
-      </button>
-      <h3 class="card-title">Apri un nuovo tavolo</h3>
+    <div class="card bg-base-100 card-border border-base-300 overflow-hidden mx-4" style="width: calc(100% - 4rem); max-width: 42rem;">
+      <div class="border-base-300 border-b border-dashed">
+        <div class="flex items-center justify-between gap-2 p-4">
+          <h3 class="card-title text-base">Apri un nuovo tavolo</h3>
+          <button
+            class="btn btn-sm btn-ghost shrink-0"
+            aria-label="Chiudi"
+            onclick={close}
+          >
+            <X size={18} weight="bold" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
       <form method="POST" action="?/createTable" use:enhance={enhanceHandler}>
-        {#if errorMsg}
-          <div class="alert alert-error alert-soft mt-2">
-            <span>{errorMsg}</span>
-          </div>
-        {/if}
-        <div class="card-body">
+        <div class="card-body gap-4">
+          {#if errorMsg}
+            <div class="alert alert-error alert-soft">
+              <span>{errorMsg}</span>
+            </div>
+          {/if}
           <input name={honeypotName} hidden tabindex="-1" aria-hidden="true" />
           <input type="hidden" name="nightDate" value={nightDate} />
           <div class="form-control flex flex-col gap-1">
@@ -153,7 +157,7 @@
               class="textarea rounded-lg"
             ></textarea>
           </div>
-          <div class="modal-action">
+          <div class="flex items-center justify-end gap-2">
             <button type="button" class="btn btn-ghost" onclick={close}>Annulla</button>
             <button class="btn btn-success" type="submit">Crea</button>
           </div>

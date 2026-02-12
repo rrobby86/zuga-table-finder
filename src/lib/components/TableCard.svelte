@@ -47,14 +47,12 @@
   };
 </script>
 
-<article
-  class="card card-border border border-base-300 bg-base-100 transition hover:shadow-lg"
->
-  <div class="card-body gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-6">
-    <div class="flex items-center justify-between gap-2 min-w-0 px-2 sm:px-4">
+<article class="card bg-base-100 card-border border-base-300 overflow-visible transition hover:shadow-lg">
+  <div class="border-base-300 ">
+    <div class="flex items-center justify-between gap-2 p-4 pb-2">
       <button
         type="button"
-        class="card-title flex-1 min-w-0 text-left hover:underline focus:underline focus-visible:outline-none focus-visible:ring flex items-center"
+        class="card-title text-base flex-1 min-w-0 px-2 text-left hover:underline focus:underline focus-visible:outline-none focus-visible:ring flex items-center gap-1"
         aria-label={`Apri dettagli ${table.title}`}
         onclick={handleExpandTable}
       >
@@ -62,24 +60,24 @@
           <ConfettiIcon
             size={20}
             weight="fill"
-            class="inline-block align-middle text-warning mr-1 pointer-events-none shrink-0"
+            class="text-warning pointer-events-none shrink-0"
           />
         {:else if table.weight === 'Leggero (max 45 min)'}
-          <FeatherIcon size={20} weight="fill" class="inline-block align-middle text-info mr-1 pointer-events-none shrink-0" />
+          <FeatherIcon size={20} weight="fill" class="text-info pointer-events-none shrink-0" />
         {:else if table.weight === 'Medio (1-2h)'}
           <PuzzlePieceIcon
             size={20}
             weight="fill"
-            class="inline-block align-middle text-success mr-1 pointer-events-none shrink-0"
+            class="text-success pointer-events-none shrink-0"
           />
         {:else if table.weight === 'Estremo (>2h)'}
-          <SkullIcon size={20} weight="fill" class="inline-block align-middle text-error mr-1 pointer-events-none shrink-0" />
+          <SkullIcon size={20} weight="fill" class="text-error pointer-events-none shrink-0" />
         {/if}
         <span class="truncate" style="max-width: 14ch;">{table.title}</span>
       </button>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 shrink-0">
         <span
-          class={`badge ${table.players.length > table.seats ? 'badge-warning' : 'badge-primary'} badge-soft shrink-0`}
+          class={`badge ${table.players.length > table.seats ? 'badge-warning' : 'badge-primary'} badge-soft`}
         >
           {table.players.length}/{table.seats}
         </span>
@@ -87,7 +85,7 @@
           <button class="btn btn-sm btn-ghost" tabindex="0" aria-label="Azioni tavolo">
             <DotsThreeOutlineVerticalIcon size={18} weight="bold" aria-hidden="true" />
           </button>
-          <ul class="dropdown-content menu bg-base-200 rounded-box z-50 p-2 shadow">
+          <ul class="dropdown-content menu bg-neutral rounded-box z-50 p-2 shadow-sm">
             <li>
               <button onclick={handleEditTable} class="btn btn-ghost hover:bg-base-300 focus:bg-base-300 focus-visible:outline-none focus-visible:ring">
                 <PencilSimpleIcon size={16} weight="bold" aria-hidden="true" />
@@ -104,8 +102,10 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="flex flex-wrap items-center gap-2 px-2 sm:px-4">
+  <div class="card-body gap-4 pt-2 pb-4">
+    <div class="flex flex-wrap items-center gap-2">
       {#if table.players.length === 0}
         <span class="badge badge-outline">Tavolo vuoto :(</span>
       {:else}
@@ -126,7 +126,7 @@
         {/each}
       {/if}
       <button
-        class="btn btn-md btn-primary btn-circle"
+        class="btn btn-md btn-primary btn-circle hover:scale-110 transition-transform"
         aria-label="Aggiungi player"
         onclick={handleAddPlayer}
       >

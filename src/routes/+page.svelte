@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import { deserialize } from '$app/forms';
-  import TableCard from '$lib/components/TableCard.svelte';
-  import MatchingSection from '$lib/components/MatchingSection.svelte';
+  import TablesSection from '$lib/components/TablesSection.svelte';
+  import PlayerMatchingSection from '$lib/components/PlayerMatchingSection.svelte';
   import FabMenu from '$lib/components/FabMenu.svelte';
   import CreateTableModal from '$lib/components/modals/CreateTableModal.svelte';
   import AddSparePlayerModal from '$lib/components/modals/AddSparePlayerModal.svelte';
@@ -98,57 +98,25 @@
   </header>
 
   <div class="grid gap-3 sm:gap-6 grid-cols-1">
-    <section aria-labelledby="tables-heading">
-      <article class="card card-border" style={`z-index:${stateManager.baseZIndex}`}>
-        <div class="card-body gap-2 sm:gap-4 p-4 sm:p-8">
-        <header class="flex items-center justify-between">
-          <div>
-            <h2 id="tables-heading" class="card-title">Tavoli attivi</h2>
-            <p class="text-sm">Clicca sul titolo per vedere i dettagli.</p>
-          </div>
-          <span class="badge badge-outline"
-            >{pageData.tables.length}
-            <img src="/assets/icons/board-game.svg" alt="" class="h-4/5" aria-hidden="true" /></span
-          >
-        </header>
-
-      {#if pageData.tables.length === 0}
-        <div class="card card-border">
-          <div class="card-body">
-            <p>Nessun tavolo aperto: aprine uno e fai partire la serata!</p>
-          </div>
-        </div>
-      {:else}
-        <div class="grid gap-2 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 items-start">
-          {#each [...pageData.tables].sort((a, b) => b.players.length - a.players.length) as table (table.id)}
-            <TableCard
-              baseZIndex={stateManager.baseZIndex}
-              {table}
-              onAddPlayer={stateManager.addPlayerModal.open}
-              onSavePlayer={(tableId, player) => actions.handleSavePlayer(tableId, player, stateManager.nightDate)}
-              onDeleteTable={stateManager.deleteTableModal.open}
-              onEditTable={stateManager.editTableModal.open}
-              onExpandTable={stateManager.detailTableModal.open}
-              onDeletePlayer={stateManager.deletePlayerModal.open}
-              onOpenDetailPlayer={stateManager.detailPlayerModal.open}
-            />
-          {/each}
-        </div>
-      {/if}
-        </div>
-
-    </article>
-    </section>
-    <section aria-labelledby="matching-heading">
-      <MatchingSection
-        weights={pageData.weights}
-        sparePlayers={pageData.sparePlayers}
-        baseZIndex={stateManager.baseZIndex}
-        {honeypotName}
-        nightDate={stateManager.nightDate}
-        reload={() => reloadData(stateManager.nightDate)}
-      />
-    </section>
+    <TablesSection
+      tables={pageData.tables}
+      baseZIndex={stateManager.baseZIndex}
+      onAddPlayer={stateManager.addPlayerModal.open}
+      onSavePlayer={(tableId, player) => actions.handleSavePlayer(tableId, player, stateManager.nightDate)}
+      onDeleteTable={stateManager.deleteTableModal.open}
+      onEditTable={stateManager.editTableModal.open}
+      onExpandTable={stateManager.detailTableModal.open}
+      onDeletePlayer={stateManager.deletePlayerModal.open}
+      onOpenDetailPlayer={stateManager.detailPlayerModal.open}
+    />
+    <PlayerMatchingSection
+      weights={pageData.weights}
+      sparePlayers={pageData.sparePlayers}
+      baseZIndex={stateManager.baseZIndex}
+      {honeypotName}
+      nightDate={stateManager.nightDate}
+      reload={() => reloadData(stateManager.nightDate)}
+    />
   </div>
 </main>
 

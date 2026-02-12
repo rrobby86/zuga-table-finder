@@ -1,11 +1,11 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
-import { MONGODB_DB, MONGODB_URI } from '$env/static/private';
+import { MONGODB_URI } from '$env/static/private';
 
 if (!MONGODB_URI) {
   throw new Error('MONGODB_URI is not set');
 }
 
-const dbName = MONGODB_DB || 'Zuga';
+const dbName = 'Zuga';
 
 const globalForMongo = globalThis as typeof globalThis & {
   __mongoClient?: MongoClient;

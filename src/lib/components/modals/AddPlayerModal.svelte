@@ -47,21 +47,25 @@
 
 {#if open && table}
   <dialog class="modal modal-open" aria-modal="true">
-    <div class="modal-box">
-      <div class="flex items-center justify-between px-3 py-2">
-        <h3 class="card-title">Aggiungi un giocatore</h3>
-        <button class="btn btn-sm btn-ghost" aria-label="Chiudi dettagli" onclick={close}>
-          <X size={18} weight="bold" aria-hidden="true" />
-        </button>
+    <div class="card bg-base-100 card-border border-base-300 overflow-hidden mx-4" style="width: calc(100% - 4rem); max-width: 42rem;">
+      <div class="border-base-300 border-b border-dashed">
+        <div class="flex items-center justify-between gap-2 p-4">
+          <div class="grow">
+            <h3 class="card-title text-base px-2">Aggiungi un giocatore</h3>
+            <p class="text-xs opacity-60">Tavolo: {table.title}</p>
+          </div>
+          <button class="btn btn-sm btn-ghost shrink-0" aria-label="Chiudi" onclick={close}>
+            <X size={18} weight="bold" aria-hidden="true" />
+          </button>
+        </div>
       </div>
-      <p>Tavolo: {table.title}</p>
       <form method="POST" action="?/joinTable" use:enhance={enhanceHandler}>
-        <div class="card-body">
+        <div class="card-body gap-4">
           <input name={honeypotName} hidden tabindex="-1" aria-hidden="true" />
           <input type="hidden" name="tableId" value={table.id} />
           <input type="hidden" name="nightDate" value={table.nightDate} />
           {#if errorMsg}
-            <div class="alert alert-error alert-soft mb-2 text-sm">{errorMsg}</div>
+            <div class="alert alert-error alert-soft text-sm">{errorMsg}</div>
           {/if}
           <div class="form-control flex flex-col gap-1">
             <label class="label" for="add-player-name">
@@ -92,7 +96,7 @@
               <span>Spiegatore</span>
             </label>
           </div>
-          <div class="modal-action">
+          <div class="flex items-center justify-end gap-2">
             <button type="button" class="btn btn-ghost" onclick={close}>Annulla</button>
             <button class="btn btn-success" type="submit">Aggiungi</button>
           </div>

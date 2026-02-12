@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import type { Player } from '$lib/types';
-  import { XIcon } from 'phosphor-svelte';
+  import { X } from 'phosphor-svelte';
 
   let {
     player = $bindable<Player | null>(null),
@@ -23,22 +23,18 @@
   });
 
   
-  const enhanceHandler = ({ update }: { update?: (opts?: { reset?: boolean }) => Promise<void> }) => {
-    // put validation here if needed  
-    return async ({ result }: any) => {
+  const enhanceHandler = () => {
+    return async ({ result, update }: any) => {
       if (!result) return;
       if (result.type === 'success') {
         const data = result.data as any;
+        errorMsg = '';
         if (data?.table) {
           const updatedPlayer = data.table.players?.find((p: Player) => p.id === player.id);
           if (updatedPlayer) {
             saved(updatedPlayer);
           }
-          close();
-          await update?.({ reset: false });
-          return;
         }
-
         close();
         await update?.({ reset: false });
         return;
@@ -73,17 +69,24 @@
     onclick={handleDialogClick}
     oncancel={handleCancel}
   >
-    <div class="modal-box">
-      <div class="flex items-center justify-between px-3 py-2">
-        <h3 class="card-title">Modifica un giocatore</h3>
-        <button class="btn btn-sm btn-ghost" aria-label="Chiudi dettagli" onclick={close}>
-          <XIcon size={18} weight="bold" aria-hidden="true" />
-        </button>
+    <div class="card bg-base-100 card-border border-base-300 overflow-hidden mx-4" style="width: calc(100% - 4rem); max-width: 42rem;">
+      <div class="border-base-300 border-b border-dashed">
+        <div class="flex items-center justify-between gap-2 p-4">
+          <h3 class="card-title text-base">Modifica un giocatore</h3>
+          <button class="btn btn-sm btn-ghost shrink-0" aria-label="Chiudi" onclick={close}>
+            <X size={18} weight="bold" aria-hidden="true" />
+          </button>
+        </div>
       </div>
       <form method="POST" action="?/updatePlayer" use:enhance={enhanceHandler}>
-        <div class="card-body">
+        <div class="card-body gap-4">
           {#if honeypotName}
             <input name={honeypotName} hidden tabindex="-1" aria-hidden="true" />
+          {/if}
+          {#if errorMsg}
+            <div class="alert alert-error alert-soft text-sm">
+              <span>{errorMsg}</span>
+            </div>
           {/if}
           <input type="hidden" name="tableId" value={tableId ?? ''} />
           <input type="hidden" name="playerId" value={player.id} />
@@ -94,15 +97,12 @@
             <input
               id="add-player-name"
               name="name"
-              class="input input-bordered w-full"
+              class="input"
               bind:value={player.name}
               maxlength="48"
               required
               aria-invalid={errorMsg ? 'true' : 'false'}
             />
-            {#if errorMsg}
-              <span class="text-error text-sm">{errorMsg}</span>
-            {/if}
           </div>
           <div class="form-control">
             <label class="label cursor-pointer justify-start gap-2" for="add-player-is-beginner">
@@ -128,22 +128,18 @@
               <span>Spiegatore</span>
             </label>
           </div>
-          <div class="modal-action">
+          <div class="flex items-center justify-end gap-2">
             <button type="button" class="btn btn-ghost" onclick={close}>Annulla</button>
             <button class="btn btn-success" type="submit">Salva</button>
           </div>
         </div>
       </form>
     </div>
-    <div
+    <button
+      type="button"
       class="modal-backdrop"
-      role="button"
-      tabindex="0"
       aria-label="Chiudi"
       onclick={close}
-      onkeydown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') close();
-      }}
-    ></div>
+    ></button>
   </dialog>
 {/if}
