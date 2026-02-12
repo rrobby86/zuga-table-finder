@@ -29,6 +29,7 @@
   $effect(() => {
     pageData = props.data;
     stateManager.updateNightDate(props.data.nightDate ?? getDefaultNightDate());
+    stateManager.updateData({ tables: props.data.tables, sparePlayers: props.data.sparePlayers });
   });
   
   // Data reload function
@@ -46,6 +47,7 @@
         const nextData = result.data as PageData;
         pageData = nextData;
         stateManager.updateNightDate(nextData.nightDate);
+        stateManager.updateData({ tables: nextData.tables, sparePlayers: nextData.sparePlayers });
       }
     }
   };
@@ -178,8 +180,7 @@
   saved={(table) => actions.handleTableSaved(table, stateManager.nightDate)}
   onDelete={() => {
     if (stateManager.editTableModal.table) {
-      stateManager.editTableModal.close();
-      stateManager.deleteTableModal.open(stateManager.editTableModal.table, stateManager.baseZIndex);
+      stateManager.deleteTableModal.open(stateManager.editTableModal.table, stateManager.editTableModal.zIndex + 2);
     }
   }}
 />

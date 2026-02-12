@@ -16,15 +16,19 @@
   } = $props();
 
   const sortedTables = $derived([...tables].sort((a, b) => b.players.length - a.players.length));
+  const carouselSortedTables = $derived([...tables].sort((a, b) => a.createdAt - b.createdAt));
 
   $effect(() => {
     if (focusedTableId && tables.length > 3) {
-      const index = sortedTables.findIndex(t => t.id === focusedTableId);
+      const index = carouselSortedTables.findIndex(t => t.id === focusedTableId);
       if (index !== -1) {
-        setTimeout(() => {
-          const element = document.getElementById(`table-${index}`);
-          element?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }, 100);
+        // Double RAF to ensure DOM is fully updated after data reload
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const element = document.getElementById(`table-${index}`);
+            element?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          });
+        });
       }
     }
   });
@@ -73,9 +77,9 @@
           {/each}
         </div>
       {:else}
-        <div class="carousel carousel-center w-full space-x-2 p-4">
-          {#each sortedTables as table, index (table.id)}
-            <div id="table-{index}" class="carousel-item w-full sm:w-1/2 lg:w-1/3">
+        <div class="carousel carousel-center max-w-md space-x-2 p-4">
+          {#each carouselSortedTables as table, index (table.id)}
+            <div id="table-{index}" class="carousel-item w-80">
               <TableCard
                 {baseZIndex}
                 {table}
@@ -91,7 +95,7 @@
           {/each}
         </div>
         <div class="flex flex-wrap justify-center w-full py-2 gap-2">
-          {#each sortedTables as table, index (table.id)}
+          {#each carouselSortedTables as table, index (table.id)}
             {@const weightColor = table.weight === 'Party' ? 'text-warning' : table.weight === 'Leggero (max 45 min)' ? 'text-info' : table.weight === 'Medio (1-2h)' ? 'text-success' : 'text-error'}
             <a href="#table-{index}" class="btn btn-xs {weightColor}" aria-label="Vai al tavolo {index + 1}">{index + 1}</a>
           {/each}

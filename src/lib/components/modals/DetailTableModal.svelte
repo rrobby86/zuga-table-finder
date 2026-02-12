@@ -163,11 +163,20 @@
 
         <div class="divider my-0"></div>
 
-        <div class="card-actions items-center justify-center p-2">
+        <div class="card-actions items-center justify-between p-2">
+          <button
+            class="btn btn-md btn-error btn-circle hover:scale-120 transition-transform"
+            aria-label="Elimina tavolo"
+            onclick={handleDeleteTable}
+            type="button"
+          >
+            <TrashIcon size={22} weight="bold" aria-hidden="true" />
+          </button>
           <button
             class="btn btn-md btn-primary btn-circle hover:scale-120 transition-transform"
             aria-label="Aggiungi player"
             onclick={handleAddPlayer}
+            type="button"
           >
             <UserPlusIcon size={22} weight="bold" aria-hidden="true" />
           </button>

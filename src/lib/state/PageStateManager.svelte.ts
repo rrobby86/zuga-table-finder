@@ -1,4 +1,4 @@
-import type { Player, Table, GameWeight } from '$lib/types';
+import type { Player, Table, GameWeight, SparePlayer } from '$lib/types';
 
 // Individual modal state classes following OOP principles
 class FabMenuState {
@@ -179,17 +179,23 @@ export class PageStateManager {
   baseZIndex = $state(0);
   nightDate = $state('');
   focusedTableId = $state<string | null>(null);
+  data = $state<{ tables: Table[]; sparePlayers: SparePlayer[] }>({ tables: [], sparePlayers: [] });
 
   constructor(initialNightDate: string) {
     this.nightDate = initialNightDate;
   }
 
   setFocusedTable(tableId: string | null) {
-    this.focusedTableId = tableId;
+      this.focusedTableId = tableId;
   }
+    
 
   updateNightDate(newDate: string) {
     this.nightDate = newDate;
+  }
+
+  updateData(newData: { tables: Table[]; sparePlayers: SparePlayer[] }) {
+    this.data = newData;
   }
 
   formatTimestamp(timestamp: number): string {

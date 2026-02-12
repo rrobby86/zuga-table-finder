@@ -24,6 +24,10 @@
     if (open) errorMsg = '';
   });
 
+  const handleDeleteTable = () => {
+    onDelete();
+  };
+
   const enhanceHandler = () => {
     return async ({ result, update }: any) => {
       if (!result) return;
@@ -116,7 +120,7 @@
               bind:value={defaultDescription}></textarea>
           </div>
           <div class="flex items-center justify-between gap-2">
-            <button type="button" class="btn btn-error" onclick={onDelete}>
+            <button type="button" class="btn btn-error" onclick={handleDeleteTable}>
               <TrashIcon size={16} weight="bold" aria-hidden="true" />
               Elimina
             </button>
