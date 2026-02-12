@@ -46,7 +46,7 @@
 </script>
 
 {#if open && table}
-  <div class="modal modal-open" style={`z-index:${zIndex}`}>
+  <div class="modal modal-open items-start sm:items-center" style={`z-index:${zIndex}`}>
     <div class="modal-box">
       <h3 class="card-title">Elimina tavolo</h3>
       <p>Sei sicuro di eliminare il tavolo "{table.title}"?</p>

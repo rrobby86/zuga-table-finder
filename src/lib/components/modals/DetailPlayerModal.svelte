@@ -53,7 +53,7 @@
 </script>
 
 {#if open && player}
-  <dialog class="modal modal-open" style={`z-index:${zIndex}`} onclick={handleDialogClick}>
+  <dialog class="modal modal-open items-start sm:items-center" style={`z-index:${zIndex}`} onclick={handleDialogClick}>
     <div class="card bg-base-100 card-border border-base-300 overflow-hidden mx-4" style="width: calc(100% - 4rem); max-width: 42rem;">
       <div class="border-base-300 border-b border-dashed">
         <div class="flex items-center justify-between gap-2 p-4">

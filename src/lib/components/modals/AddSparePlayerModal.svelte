@@ -49,7 +49,7 @@
 
 {#if open}
   <dialog
-    class="modal modal-open"
+    class="modal modal-open items-start sm:items-center"
     style={`z-index:${zIndex}`}
     tabindex="-1"
     aria-modal="true"

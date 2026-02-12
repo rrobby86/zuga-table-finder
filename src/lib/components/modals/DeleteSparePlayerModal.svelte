@@ -48,7 +48,7 @@
 </script>
 
 {#if open && sparePlayer}
-  <div class="modal modal-open" style={`z-index:${zIndex}`}>
+  <div class="modal modal-open items-start sm:items-center" style={`z-index:${zIndex}`}>
     <div class="modal-box">
       <h3 class="card-title">Rimuovi giocatore</h3>
       <p>Vuoi rimuovere <b>{sparePlayer.name}</b> dalla lista?</p>

@@ -46,7 +46,7 @@
 </script>
 
 {#if open && table}
-  <dialog class="modal modal-open" aria-modal="true">
+  <dialog class="modal modal-open items-start sm:items-center" aria-modal="true">
     <div class="card bg-base-100 card-border border-base-300 overflow-hidden mx-4" style="width: calc(100% - 4rem); max-width: 42rem;">
       <div class="border-base-300 border-b border-dashed">
         <div class="flex items-center justify-between gap-2 p-4">

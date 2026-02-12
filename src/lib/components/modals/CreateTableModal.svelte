@@ -46,7 +46,7 @@
 
 {#if open}
   <dialog
-    class="modal modal-open"
+    class="modal modal-open items-start sm:items-center"
     style={`z-index:${zIndex}`}
     onclick={(e) => {
       if (e.target === e.currentTarget) close();
